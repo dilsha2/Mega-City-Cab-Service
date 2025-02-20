@@ -26,7 +26,6 @@ import java.util.List;
 public class CustomerServlet extends HttpServlet {
     private CustomerService customerService;
 
-    // Default constructor required by Tomcat
     public CustomerServlet() {
         super();
     }
@@ -45,25 +44,18 @@ public class CustomerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        System.out.println("1. savinggggg");
+        String action = request.getParameter("action"); // Determine the action (add, update, delete)
 
-        String registrationNumber = request.getParameter("registrationNumber");
-        String name = request.getParameter("name");
-        String address = request.getParameter("address");
-        String nic = request.getParameter("nic");
-        String telephone = request.getParameter("telephone");
-
-        Customer customer = new Customer();
-        customer.setRegistrationNumber(registrationNumber);
-        customer.setName(name);
-        customer.setAddress(address);
-        customer.setNic(nic);
-        customer.setTelephone(telephone);
-
-        try {
-            customerService.registerCustomer(customer);
-            response.sendRedirect("customers.jsp?success=1");
-        } catch (SQLException e) {
+        if ("add".equals(action)) {
+            // Handle Add Customer
+            handleAddCustomer(request, response);
+        } else if ("update".equals(action)) {
+            // Handle Update Customer
+            handleUpdateCustomer(request, response);
+        } else if ("delete".equals(action)) {
+            // Handle Delete Customer
+            handleDeleteCustomer(request, response);
+        } else {
             response.sendRedirect("customers.jsp?error=1");
         }
     }
@@ -82,6 +74,67 @@ public class CustomerServlet extends HttpServlet {
         } catch (SQLException e) {
             e.printStackTrace(); // Print error details in logs
             response.sendRedirect("customers.jsp?error=1");
+        }
+    }
+
+    private void handleAddCustomer(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String registrationNumber = request.getParameter("registrationNumber");
+        String name = request.getParameter("name");
+        String address = request.getParameter("address");
+        String nic = request.getParameter("nic");
+        String telephone = request.getParameter("telephone");
+
+        Customer customer = new Customer();
+        customer.setRegistrationNumber(registrationNumber);
+        customer.setName(name);
+        customer.setAddress(address);
+        customer.setNic(nic);
+        customer.setTelephone(telephone);
+
+        try {
+            customerService.registerCustomer(customer);
+            response.sendRedirect("customers?success=1");
+        } catch (SQLException e) {
+            response.sendRedirect("customers?error=1");
+        }
+    }
+
+    private void handleUpdateCustomer(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String registrationNumber = request.getParameter("registrationNumber");
+        String name = request.getParameter("name");
+        String address = request.getParameter("address");
+        String nic = request.getParameter("nic");
+        String telephone = request.getParameter("telephone");
+
+        Customer customer = new Customer();
+        customer.setRegistrationNumber(registrationNumber);
+        customer.setName(name);
+        customer.setAddress(address);
+        customer.setNic(nic);
+        customer.setTelephone(telephone);
+
+        try {
+            customerService.updateCustomer(customer);
+            response.sendRedirect("customers?success=1");
+        } catch (SQLException e) {
+            response.sendRedirect("customers?error=1");
+        }
+    }
+
+    private void handleDeleteCustomer(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        String registrationNumber = request.getParameter("registrationNumber");
+
+        try {
+            customerService.deleteCustomer(registrationNumber);
+            response.sendRedirect("customers?success=1");
+        } catch (SQLException e) {
+            response.sendRedirect("customers?error=1");
         }
     }
 }

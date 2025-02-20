@@ -45,4 +45,24 @@ public class CustomerDAO {
         }
         return customers;
     }
+
+    public void updateCustomer(Customer customer) throws SQLException {
+        String sql = "UPDATE customers SET name = ?, address = ?, nic = ?, telephone = ? WHERE registration_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, customer.getName());
+            statement.setString(2, customer.getAddress());
+            statement.setString(3, customer.getNic());
+            statement.setString(4, customer.getTelephone());
+            statement.setString(5, customer.getRegistrationNumber());
+            statement.executeUpdate();
+        }
+    }
+
+    public void deleteCustomer(String registrationNumber) throws SQLException {
+        String sql = "DELETE FROM customers WHERE registration_number = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, registrationNumber);
+            statement.executeUpdate();
+        }
+    }
 }

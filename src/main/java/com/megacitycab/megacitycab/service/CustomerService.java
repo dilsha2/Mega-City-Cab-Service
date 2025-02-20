@@ -21,4 +21,12 @@ public class CustomerService {
     public List<Customer> getAllCustomers() throws SQLException {
         return customerDAO.getAllCustomers();
     }
+
+    public void updateCustomer(Customer customer) throws SQLException {
+        customerDAO.updateCustomer(customer);
+    }
+
+    public void deleteCustomer(String registrationNumber) throws SQLException {
+        customerDAO.deleteCustomer(registrationNumber);
+    }
 }

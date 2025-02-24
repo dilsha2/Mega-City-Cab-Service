@@ -2,6 +2,7 @@ package com.megacitycab.megacitycab.service;
 
 
 import com.megacitycab.megacitycab.dao.CustomerDAO;
+import com.megacitycab.megacitycab.model.Car;
 import com.megacitycab.megacitycab.model.Customer;
 
 import java.sql.SQLException;
@@ -28,5 +29,9 @@ public class CustomerService {
 
     public void deleteCustomer(String registrationNumber) throws SQLException {
         customerDAO.deleteCustomer(registrationNumber);
+    }
+
+    public Customer getCustomerByRegistrationNumber(String customerId) throws SQLException {
+        return customerDAO.getCustomerByRegistrationNumber(customerId);
     }
 }

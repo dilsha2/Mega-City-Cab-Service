@@ -26,6 +26,10 @@ public class Customer {
         this.telephone = telephone;
     }
 
+    public Customer(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
+    }
+
     public String getRegistrationNumber() {
         return registrationNumber;
     }

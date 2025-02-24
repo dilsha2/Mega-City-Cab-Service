@@ -1,21 +1,24 @@
 package com.megacitycab.megacitycab.model;
 
+
 public class Booking {
     private String bookingNumber;
-    private String customerName;
+    private Customer customer;
     private String destination;
     private double distance;
     private double fare;
+    private Car car;
 
     public Booking() {
     }
 
-    public Booking(String bookingNumber, String customerName, String destination, double distance, double fare) {
-        this.bookingNumber = bookingNumber;
-        this.customerName = customerName;
-        this.destination = destination;
-        this.distance = distance;
-        this.fare = fare;
+    public Booking(String bookingNumber, Customer customer, String destination, double distance, double fare, Car car) {
+        this.setBookingNumber(bookingNumber);
+        this.setCustomer(customer);
+        this.setDestination(destination);
+        this.setDistance(distance);
+        this.setFare(fare);
+        this.setCar(car);
     }
 
     public String getBookingNumber() {
@@ -26,12 +29,12 @@ public class Booking {
         this.bookingNumber = bookingNumber;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public String getDestination() {
@@ -56,5 +59,13 @@ public class Booking {
 
     public void setFare(double fare) {
         this.fare = fare;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 }

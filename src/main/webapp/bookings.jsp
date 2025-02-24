@@ -10,119 +10,96 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5 p-4 bg-white rounded shadow">
-    <h1 class="text-center">Booking Management</h1>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="dashboard.jsp" class="btn btn-outline-primary">
+            <i class="bi bi-house-door-fill"></i> Home
+        </a>
+    </div>
 
     <!-- Success and Error Alerts -->
     <div id="successAlert" class="alert alert-success d-none" role="alert">
-        ✅ Booking added successfully!
+        ✅ Operation completed successfully!
     </div>
     <div id="errorAlert" class="alert alert-danger d-none" role="alert">
-        ❌ Error occurred while adding the booking.
+        ❌ Error occurred while processing your request.
     </div>
 
-    <!-- Add New Booking Button (Centered) -->
+    <h1 class="text-center">Booking Management</h1>
+
     <div class="text-center my-3">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookingModal">
             Add New Booking
         </button>
     </div>
 
-    <!-- Add Booking Modal -->
-    <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addBookingModalLabel">Add New Booking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="bookings" method="post">
-                        <input type="hidden" name="action" value="add">
-                        <div class="mb-3">
-                            <label for="bookingNumber" class="form-label">Booking Number</label>
-                            <input type="text" class="form-control" id="bookingNumber" name="bookingNumber" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="customerName" class="form-label">Customer Name</label>
-                            <input type="text" class="form-control" id="customerName" name="customerName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="destination" class="form-label">Destination</label>
-                            <input type="text" class="form-control" id="destination" name="destination" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="distance" class="form-label">Distance (km)</label>
-                            <input type="number" class="form-control" id="distance" name="distance" step="0.1" required>
-                        </div>
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success">Add Booking</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <!-- Search Filters -->
+    <div class="row my-3">
+        <div class="col-md-6">
+            <input type="text" id="searchBookingId" class="form-control" placeholder="Search by Booking ID...">
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="searchCustomerId" class="form-control" placeholder="Search by Customer ID...">
         </div>
     </div>
 
     <!-- Booking List -->
     <h2 class="mt-5">Booking List</h2>
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped text-center">
-            <thead class="table-primary">
+    <table class="table table-bordered table-striped text-center">
+        <thead class="table-primary">
+        <tr>
+            <th>Booking Number</th>
+            <th>Customer</th>
+            <th>Destination</th>
+            <th>Distance (km)</th>
+            <th>Fare (LKR)</th>
+            <th>Car</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="bookingTableBody">
+        <c:forEach var="booking" items="${bookings}">
             <tr>
-                <th>Booking Number</th>
-                <th>Customer Name</th>
-                <th>Destination</th>
-                <th>Distance (km)</th>
-                <th>Fare (LKR)</th>
-                <th>Actions</th>
+                <td class="booking-id">${booking.bookingNumber}</td>
+                <td class="customer-id">${booking.customer.registrationNumber}</td>
+                <td>${booking.destination}</td>
+                <td>${booking.distance}</td>
+                <td>${booking.fare}</td>
+                <td>${booking.car.carId}</td>
+                <td>
+                    <a href="editBooking?id=${booking.bookingNumber}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="deleteBooking?id=${booking.bookingNumber}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure you want to delete this booking?')">Delete</a>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            <c:forEach var="booking" items="${bookings}">
-                <tr>
-                    <td>${booking.bookingNumber}</td>
-                    <td>${booking.customerName}</td>
-                    <td>${booking.destination}</td>
-                    <td>${booking.distance}</td>
-                    <td>${booking.fare}</td>
-                    <td>
-                        <!-- Delete Button -->
-                        <form action="bookings" method="post" style="display:inline;">
-                            <input type="hidden" name="action" value="delete">
-                            <input type="hidden" name="bookingNumber" value="${booking.bookingNumber}">
-                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
+        </c:forEach>
+        </tbody>
+    </table>
 </div>
 
 <script>
-    function checkUrlParams() {
-        const urlParams = new URLSearchParams(window.location.search);
+    function filterTable() {
+        let bookingInput = document.getElementById("searchBookingId").value.toLowerCase();
+        let customerInput = document.getElementById("searchCustomerId").value.toLowerCase();
+        let tableRows = document.querySelectorAll("#bookingTableBody tr");
 
-        if (urlParams.has("success")) {
-            document.getElementById('successAlert').classList.remove('d-none');
-            setTimeout(() => {
-                document.getElementById('successAlert').classList.add('d-none');
-            }, 5000);
-        }
+        tableRows.forEach(row => {
+            let bookingId = row.querySelector(".booking-id").textContent.toLowerCase();
+            let customerId = row.querySelector(".customer-id").textContent.toLowerCase();
 
-        if (urlParams.has("error")) {
-            document.getElementById('errorAlert').classList.remove('d-none');
-            setTimeout(() => {
-                document.getElementById('errorAlert').classList.add('d-none');
-            }, 5000);
-        }
+            if (bookingId.includes(bookingInput) && customerId.includes(customerInput)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
     }
 
-    window.onload = checkUrlParams;
+    document.getElementById("searchBookingId").addEventListener("input", filterTable);
+    document.getElementById("searchCustomerId").addEventListener("input", filterTable);
 </script>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

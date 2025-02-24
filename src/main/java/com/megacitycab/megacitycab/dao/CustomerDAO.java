@@ -65,4 +65,24 @@ public class CustomerDAO {
             statement.executeUpdate();
         }
     }
+
+    public Customer getCustomerByRegistrationNumber(String registrationNumber) throws SQLException {
+        String query = "SELECT * FROM customers WHERE registration_number = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, registrationNumber);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Customer customer = new Customer();
+                    customer.setRegistrationNumber(rs.getString("registration_number"));
+                    customer.setName(rs.getString("name"));
+                    customer.setAddress(rs.getString("address"));
+                    customer.setNic(rs.getString("nic"));
+                    customer.setTelephone(rs.getString("telephone"));
+                    return customer;
+                } else {
+                    return null;  // Return null if no customer found
+                }
+            }
+        }
+    }
 }

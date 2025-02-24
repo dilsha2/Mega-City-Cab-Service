@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Mega City Cab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         body {
             background-color: #f8f9fa;
@@ -23,6 +25,7 @@
             background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         .dashboard-container h1 {
@@ -48,11 +51,33 @@
         .nav-links a:hover {
             text-decoration: underline;
         }
+
+        /* Logout Button */
+        .logout-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 20px;
+            color: #dc3545;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            color: #a71d2a;
+        }
     </style>
 </head>
 <body>
+
 <div class="dashboard-container">
+    <!-- Logout Button -->
+    <a href="index.jsp" class="logout-btn" title="Logout">
+        <i class="fas fa-sign-out-alt"></i> Logout
+    </a>
+
     <h1>Welcome to Mega City Cab</h1>
+
     <div class="nav-links">
         <a href="customers">Manage Customers</a>
         <a href="bookings">Manage Bookings</a>
@@ -62,5 +87,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

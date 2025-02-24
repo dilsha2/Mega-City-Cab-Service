@@ -7,9 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Management - Mega City Cab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 <div class="container mt-5 p-4 bg-white rounded shadow">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="dashboard.jsp" class="btn btn-outline-primary">
+            <i class="bi bi-house-door-fill"></i> Home
+        </a>
+    </div>
+
     <h1 class="text-center mb-4">Driver Management</h1>
 
     <!-- Success and Error Alerts -->

@@ -7,10 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Management - Mega City Cab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 
 <div class="container mt-5 p-4 bg-white rounded shadow">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="dashboard.jsp" class="btn btn-outline-primary">
+            <i class="bi bi-house-door-fill"></i> Home
+        </a>
+    </div>
+
     <h1 class="text-center">Car Management</h1>
 
     <!-- Success and Error Alerts -->
@@ -37,6 +45,7 @@
                 <th>Car ID</th>
                 <th>Model</th>
                 <th>License Plate</th>
+                <th>Price</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -46,6 +55,7 @@
                     <td>${car.carId}</td>
                     <td>${car.model}</td>
                     <td>${car.licensePlate}</td>
+                    <td>${car.price}</td>
                     <td>
                         <!-- Update Button -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
@@ -81,6 +91,10 @@
                                     <div class="mb-3">
                                         <label for="licensePlate${car.carId}" class="form-label">License Plate</label>
                                         <input type="text" id="licensePlate${car.carId}" name="licensePlate" class="form-control" value="${car.licensePlate}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="price${car.price}" class="form-label">Rate per km</label>
+                                        <input type="text" id="price${car.price}" name="price" class="form-control" value="${car.price}" required>
                                     </div>
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-success">Update Car</button>
@@ -118,6 +132,10 @@
                     <div class="mb-3">
                         <label for="licensePlate" class="form-label">License Plate</label>
                         <input type="text" class="form-control" id="licensePlate" name="licensePlate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="licensePlate" class="form-label">Price</label>
+                        <input type="text" class="form-control" id="price" name="price" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Add Car</button>
                 </form>

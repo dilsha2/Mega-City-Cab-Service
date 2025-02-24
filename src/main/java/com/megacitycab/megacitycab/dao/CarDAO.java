@@ -17,11 +17,12 @@ public class CarDAO {
     }
 
     public void addCar(Car car) throws SQLException {
-        String sql = "INSERT INTO cars (car_id, model, license_plate) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO cars (car_id, model, license_plate, price) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, car.getCarId());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getLicensePlate());
+            statement.setDouble(4, car.getPrice());
             statement.executeUpdate();
         }
     }
@@ -36,6 +37,7 @@ public class CarDAO {
                 car.setCarId(resultSet.getString("car_id"));
                 car.setModel(resultSet.getString("model"));
                 car.setLicensePlate(resultSet.getString("license_plate"));
+                car.setPrice(resultSet.getDouble("price"));
                 cars.add(car);
             }
         }
@@ -43,11 +45,12 @@ public class CarDAO {
     }
 
     public void updateCar(Car car) throws SQLException {
-        String sql = "UPDATE cars SET model = ?, license_plate = ? WHERE car_id = ?";
+        String sql = "UPDATE cars SET model = ?, license_plate = ?, price = ? WHERE car_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, car.getModel());
             statement.setString(2, car.getLicensePlate());
             statement.setString(3, car.getCarId());
+            statement.setDouble(4, car.getPrice());
             statement.executeUpdate();
         }
     }
@@ -58,5 +61,23 @@ public class CarDAO {
             statement.setString(1, carId);
             statement.executeUpdate();
         }
+    }
+
+    public Car getCarById(String carId) throws SQLException {
+        String query = "SELECT * FROM cars WHERE car_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, carId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String id = rs.getString("car_id");
+                String model = rs.getString("model");
+                String licensePlate = rs.getString("license_plate");
+                double price = rs.getDouble("price");
+
+                return new Car(id, model, licensePlate, price);
+            }
+        }
+        return null;  // Return null if the car is not found
     }
 }

@@ -61,16 +61,19 @@ public class CarServlet extends HttpServlet {
     }
 
     private void handleAddCar(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
 
         String carId = request.getParameter("carId");
         String model = request.getParameter("model");
         String licensePlate = request.getParameter("licensePlate");
+        String price = request.getParameter("price");
+
 
         Car car = new Car();
         car.setCarId(carId);
         car.setModel(model);
         car.setLicensePlate(licensePlate);
+        car.setPrice(Double.parseDouble(price));
 
         try {
             carService.addCar(car);
@@ -81,16 +84,20 @@ public class CarServlet extends HttpServlet {
     }
 
     private void handleUpdateCar(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
 
         String carId = request.getParameter("carId");
         String model = request.getParameter("model");
         String licensePlate = request.getParameter("licensePlate");
+        String price = request.getParameter("price");
+
+        System.out.println(price);
 
         Car car = new Car();
         car.setCarId(carId);
         car.setModel(model);
         car.setLicensePlate(licensePlate);
+        car.setPrice(Double.parseDouble(price));
 
         try {
             carService.updateCar(car);
@@ -101,7 +108,7 @@ public class CarServlet extends HttpServlet {
     }
 
     private void handleDeleteCar(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
 
         String carId = request.getParameter("carId");
 

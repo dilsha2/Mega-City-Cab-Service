@@ -8,6 +8,8 @@
     <title>Customer Management</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -21,7 +23,13 @@
 <body>
 
 <div class="container">
-    <h1 class="text-center mb-4">Customer Management</h1>
+    <!-- Home Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="dashboard.jsp" class="btn btn-outline-primary">
+            <i class="bi bi-house-door-fill"></i> Home
+        </a>
+        <h1 class="text-center flex-grow-1">Customer Management</h1>
+    </div>
 
     <!-- Add New Customer Button -->
     <div class="text-center">
@@ -84,23 +92,23 @@
                                     <input type="hidden" name="registrationNumber"
                                            value="${customer.registrationNumber}">
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Name</label>
-                                        <input type="text" id="name" name="name" class="form-control"
-                                               value="${customer.name}" required>
+                                        <label class="form-label">Name</label>
+                                        <input type="text" name="name" class="form-control" value="${customer.name}"
+                                               required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="address" class="form-label">Address</label>
-                                        <input type="text" id="address" name="address" class="form-control"
+                                        <label class="form-label">Address</label>
+                                        <input type="text" name="address" class="form-control"
                                                value="${customer.address}" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="nic" class="form-label">NIC</label>
-                                        <input type="text" id="nic" name="nic" class="form-control"
-                                               value="${customer.nic}" required>
+                                        <label class="form-label">NIC</label>
+                                        <input type="text" name="nic" class="form-control" value="${customer.nic}"
+                                               required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="telephone" class="form-label">Telephone</label>
-                                        <input type="text" id="telephone" name="telephone" class="form-control"
+                                        <label class="form-label">Telephone</label>
+                                        <input type="text" name="telephone" class="form-control"
                                                value="${customer.telephone}" required>
                                     </div>
                                     <div class="text-center">
@@ -129,25 +137,24 @@
                 <form action="customers" method="post">
                     <input type="hidden" name="action" value="add">
                     <div class="mb-3">
-                        <label for="registrationNumber" class="form-label">Registration Number</label>
-                        <input type="text" id="registrationNumber" name="registrationNumber" class="form-control"
-                               required>
+                        <label class="form-label">Registration Number</label>
+                        <input type="text" name="registrationNumber" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" id="address" name="address" class="form-control" required>
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="nic" class="form-label">NIC</label>
-                        <input type="text" id="nic" name="nic" class="form-control" required>
+                        <label class="form-label">NIC</label>
+                        <input type="text" name="nic" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="telephone" class="form-label">Telephone</label>
-                        <input type="text" id="telephone" name="telephone" class="form-control" required>
+                        <label class="form-label">Telephone</label>
+                        <input type="text" name="telephone" class="form-control" required>
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-success">Register Customer</button>
@@ -167,7 +174,6 @@
         logTableData();
     };
 
-    // Function to extract query parameters and show alerts
     function getUrlParams() {
         const params = new URLSearchParams(window.location.search);
         if (params.has("success")) {
@@ -177,22 +183,18 @@
         }
     }
 
-    // Function to log table data
     function logTableData() {
         const tableRows = document.querySelectorAll("tbody tr");
-
         console.log("Logging Customer Table Data:");
-
         tableRows.forEach((row, index) => {
             const columns = row.querySelectorAll("td");
-            const customerData = {
+            console.log(`Customer ${index + 1}:`, {
                 registrationNumber: columns[0]?.textContent.trim(),
                 name: columns[1]?.textContent.trim(),
                 address: columns[2]?.textContent.trim(),
                 nic: columns[3]?.textContent.trim(),
                 telephone: columns[4]?.textContent.trim()
-            };
-            console.log(`Customer ${index + 1}:`, customerData);
+            });
         });
     }
 </script>

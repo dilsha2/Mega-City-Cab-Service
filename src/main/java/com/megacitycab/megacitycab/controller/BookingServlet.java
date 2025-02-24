@@ -2,8 +2,14 @@ package com.megacitycab.megacitycab.controller;
 
 
 import com.megacitycab.megacitycab.dao.BookingDAO;
+import com.megacitycab.megacitycab.dao.CarDAO;
+import com.megacitycab.megacitycab.dao.CustomerDAO;
 import com.megacitycab.megacitycab.model.Booking;
+import com.megacitycab.megacitycab.model.Car;
+import com.megacitycab.megacitycab.model.Customer;
 import com.megacitycab.megacitycab.service.BookingService;
+import com.megacitycab.megacitycab.service.CarService;
+import com.megacitycab.megacitycab.service.CustomerService;
 import com.megacitycab.megacitycab.util.DBUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,12 +25,18 @@ import java.util.List;
 @WebServlet("/bookings")
 public class BookingServlet extends HttpServlet {
     private BookingService bookingService;
+    private CarService carService;
+
+    private CustomerService customerService;
 
     @Override
     public void init() throws ServletException {
         try {
             Connection connection = DBUtil.getConnection();
             bookingService = new BookingService(new BookingDAO(connection));
+            carService = new CarService(new CarDAO(connection));
+            customerService = new CustomerService(new CustomerDAO(connection));
+
         } catch (SQLException e) {
             throw new ServletException("Unable to connect to database", e);
         }
@@ -37,7 +49,11 @@ public class BookingServlet extends HttpServlet {
         String action = request.getParameter("action"); // Determine the action (add, update, delete)
 
         if ("add".equals(action)) {
-            handleAddBooking(request, response);
+            try {
+                handleAddBooking(request, response);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else if ("update".equals(action)) {
             handleUpdateBooking(request, response);
         } else if ("delete".equals(action)) {
@@ -51,8 +67,17 @@ public class BookingServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            // Fetch bookings
             List<Booking> bookings = bookingService.getAllBookings();
             request.setAttribute("bookings", bookings);
+
+            // Fetch available cars
+            List<Car> availableCars = carService.getAllCars();  // Fetch available cars from CarService
+            request.setAttribute("availableCars", availableCars);
+
+            request.setAttribute("registeredCustomers", customerService.getAllCustomers());
+
+            // Forward to the JSP page
             request.getRequestDispatcher("bookings.jsp").forward(request, response);
         } catch (SQLException e) {
             response.sendRedirect("bookings.jsp?error=1");
@@ -60,27 +85,46 @@ public class BookingServlet extends HttpServlet {
     }
 
     private void handleAddBooking(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, SQLException {
 
         String bookingNumber = request.getParameter("bookingNumber");
-        String customerName = request.getParameter("customerName");
+        String customerRegNum = request.getParameter("customerRegistrationNumber");
         String destination = request.getParameter("destination");
         double distance = Double.parseDouble(request.getParameter("distance"));
+        String carId = request.getParameter("carId");  // Only one car allowed
+
+        System.out.println("Fetching customer with registration number: " + customerRegNum);
+        Customer customer = customerService.getCustomerByRegistrationNumber(customerRegNum);
+
+        if (customer == null) {
+            System.out.println("Customer not found: " + customerRegNum);
+            response.sendRedirect("bookings.jsp?error=Customer not found");
+            return;
+        }
+
+        System.out.println("Fetching Car with ID: " + carId);
+        Car car = carService.getCarById(carId);
+        if (car == null) {
+            System.out.println("Car not found: " + carId);
+            response.sendRedirect("bookings.jsp?error=Car not found");
+            return;
+        }
 
         double fare = distance * 2;
-
         Booking booking = new Booking();
         booking.setBookingNumber(bookingNumber);
-        booking.setCustomerName(customerName);
+        booking.setCustomer(customer);
         booking.setDestination(destination);
         booking.setDistance(distance);
         booking.setFare(fare);
+        booking.setCar(car);
 
         try {
             bookingService.addBooking(booking);
-            response.sendRedirect("bookings?success=1");
+            response.sendRedirect("bookings");
         } catch (SQLException e) {
-            response.sendRedirect("bookings?error=1");
+            e.printStackTrace();
+            response.sendRedirect("bookings.jsp?error=1");
         }
     }
 
@@ -96,7 +140,7 @@ public class BookingServlet extends HttpServlet {
 
         Booking booking = new Booking();
         booking.setBookingNumber(bookingNumber);
-        booking.setCustomerName(customerName);
+        booking.setCustomer(new Customer(customerName));
         booking.setDestination(destination);
         booking.setDistance(distance);
         booking.setFare(fare);
@@ -110,7 +154,7 @@ public class BookingServlet extends HttpServlet {
     }
 
     private void handleDeleteBooking(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws IOException {
 
         String bookingNumber = request.getParameter("bookingNumber");
 

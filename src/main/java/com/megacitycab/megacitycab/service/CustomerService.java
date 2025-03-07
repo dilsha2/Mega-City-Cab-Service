@@ -15,7 +15,14 @@ public class CustomerService {
         this.customerDAO = customerDAO;
     }
 
-    public void registerCustomer(Customer customer) throws SQLException {
+    public void registerCustomer(String registrationNumber, String name, String address, String nic, String telephone) throws SQLException {
+        Customer customer = new Customer();
+        customer.setRegistrationNumber(registrationNumber);
+        customer.setName(name);
+        customer.setAddress(address);
+        customer.setNic(nic);
+        customer.setTelephone(telephone);
+
         customerDAO.addCustomer(customer);
     }
 
@@ -23,7 +30,15 @@ public class CustomerService {
         return customerDAO.getAllCustomers();
     }
 
-    public void updateCustomer(Customer customer) throws SQLException {
+    public void updateCustomer(String registrationNumber, String name, String address, String nic, String telephone) throws SQLException {
+
+        Customer customer = new Customer();
+        customer.setRegistrationNumber(registrationNumber);
+        customer.setName(name);
+        customer.setAddress(address);
+        customer.setNic(nic);
+        customer.setTelephone(telephone);
+
         customerDAO.updateCustomer(customer);
     }
 

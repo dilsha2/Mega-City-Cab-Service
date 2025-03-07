@@ -86,15 +86,8 @@ public class CustomerServlet extends HttpServlet {
         String nic = request.getParameter("nic");
         String telephone = request.getParameter("telephone");
 
-        Customer customer = new Customer();
-        customer.setRegistrationNumber(registrationNumber);
-        customer.setName(name);
-        customer.setAddress(address);
-        customer.setNic(nic);
-        customer.setTelephone(telephone);
-
         try {
-            customerService.registerCustomer(customer);
+            customerService.registerCustomer(registrationNumber,name, address,nic, telephone);
             response.sendRedirect("customers?success=1");
         } catch (SQLException e) {
             response.sendRedirect("customers?error=1");
@@ -110,15 +103,8 @@ public class CustomerServlet extends HttpServlet {
         String nic = request.getParameter("nic");
         String telephone = request.getParameter("telephone");
 
-        Customer customer = new Customer();
-        customer.setRegistrationNumber(registrationNumber);
-        customer.setName(name);
-        customer.setAddress(address);
-        customer.setNic(nic);
-        customer.setTelephone(telephone);
-
         try {
-            customerService.updateCustomer(customer);
+            customerService.updateCustomer(registrationNumber, name, address, nic, telephone);
             response.sendRedirect("customers?success=1");
         } catch (SQLException e) {
             response.sendRedirect("customers?error=1");

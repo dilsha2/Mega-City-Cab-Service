@@ -25,8 +25,8 @@ class DriverServiceTest {
     @Order(1)
     void testAddDriver() throws SQLException {
         System.out.println("Running testAddDriver...");
-        Driver driver = new Driver("D001", "Alice Brown", "0123456789");
-        driverService.addDriver(driver);
+        // Driver driver = new Driver("D001", "Alice Brown", "0123456789", "AVAILABLE");
+        driverService.addDriver("D001", "Alice Brown", "0123456789");
         Driver retrievedDriver = driverService.getAllDrivers().stream()
                 .filter(d -> d.getDriverId().equals("D001"))
                 .findFirst()
@@ -49,7 +49,7 @@ class DriverServiceTest {
     @Order(3)
     void testUpdateDriver() throws SQLException {
         System.out.println("Running testUpdateDriver...");
-        Driver driver = new Driver("D001", "Alice Updated", "0987654321");
+        Driver driver = new Driver("D001", "Alice Updated", "0987654321", "AVAILABLE");
         driverService.updateDriver(driver);
         Driver updatedDriver = driverService.getAllDrivers().stream()
                 .filter(d -> d.getDriverId().equals("D001"))

@@ -46,6 +46,7 @@
                 <th>Model</th>
                 <th>License Plate</th>
                 <th>Price</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -56,6 +57,7 @@
                     <td>${car.model}</td>
                     <td>${car.licensePlate}</td>
                     <td>${car.price}</td>
+                    <td>${car.status}</td>
                     <td>
                         <!-- Update Button -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"

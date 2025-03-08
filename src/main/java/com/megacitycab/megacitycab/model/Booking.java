@@ -8,17 +8,19 @@ public class Booking {
     private double distance;
     private double fare;
     private Car car;
+    private Driver driver;
 
     public Booking() {
     }
 
-    public Booking(String bookingNumber, Customer customer, String destination, double distance, double fare, Car car) {
+    public Booking(String bookingNumber, Customer customer, String destination, double distance, double fare, Car car, Driver driver) {
         this.setBookingNumber(bookingNumber);
         this.setCustomer(customer);
         this.setDestination(destination);
         this.setDistance(distance);
         this.setFare(fare);
         this.setCar(car);
+        this.setDriver(driver);
     }
 
     public String getBookingNumber() {
@@ -67,5 +69,13 @@ public class Booking {
 
     public void setCar(Car car) {
         this.car = car;
+    }
+
+    public Driver getDriver() {
+        return driver;
+    }
+
+    public void setDriver(Driver driver) {
+        this.driver = driver;
     }
 }

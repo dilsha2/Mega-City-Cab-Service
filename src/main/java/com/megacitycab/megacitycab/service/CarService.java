@@ -1,5 +1,6 @@
 package com.megacitycab.megacitycab.service;
 
+import com.megacitycab.megacitycab.enums.Status;
 import com.megacitycab.megacitycab.dao.CarDAO;
 import com.megacitycab.megacitycab.model.Car;
 
@@ -21,6 +22,10 @@ public class CarService {
         return carDAO.getAllCars();
     }
 
+    public List<Car> getAllCarsWhereStatus(String status) throws SQLException {
+        return carDAO.getAllCarsWhereStatus(status);
+    }
+
     public void updateCar(Car car) throws SQLException {
         carDAO.updateCar(car);
     }
@@ -29,7 +34,11 @@ public class CarService {
          carDAO.deleteCar(carId);
     }
 
-    public Car getCarById(String carId) throws SQLException {
+    public Car getCarById(String carId)throws SQLException {
         return carDAO.getCarById(carId);
+    }
+
+    public void updateCarStatus(String carId, String status) throws SQLException {
+        carDAO.updateCarStatus(carId, status);
     }
 }

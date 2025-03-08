@@ -5,15 +5,17 @@ public class Car {
     private String model;
     private String licensePlate;
     private double price;
+    private String status;
 
     public Car() {
     }
 
-    public Car(String carId, String model, String licensePlate, double price) {
+    public Car(String carId, String model, String licensePlate, double price, String status) {
         this.carId = carId;
         this.model = model;
         this.licensePlate = licensePlate;
         this.price = price;
+        this.status = status;
     }
 
     public Car(String carId) {
@@ -50,5 +52,13 @@ public class Car {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

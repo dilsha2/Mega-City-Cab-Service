@@ -3,6 +3,7 @@ package com.megacitycab.megacitycab.dao;
 import com.megacitycab.megacitycab.model.Booking;
 import com.megacitycab.megacitycab.model.Car;
 import com.megacitycab.megacitycab.model.Customer;
+import com.megacitycab.megacitycab.model.Driver;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +20,7 @@ public class BookingDAO {
     }
 
     public void addBooking(Booking booking) throws SQLException {
-        String sql = "INSERT INTO bookings (booking_number, customer_id, destination, distance, fare, car_id) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO bookings (booking_number, customer_id, destination, distance, fare, car_id, driver_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, booking.getBookingNumber());
             statement.setString(2, booking.getCustomer().getRegistrationNumber());  // Customer ID
@@ -27,18 +28,19 @@ public class BookingDAO {
             statement.setDouble(4, booking.getDistance());
             statement.setDouble(5, booking.getFare());
             statement.setString(6, booking.getCar().getCarId());
+            statement.setString(7, booking.getDriver().getDriverId());
             statement.executeUpdate();
         }
 
         // Insert only one car
-        String carSql = "INSERT INTO booking_cars (booking_number, car_id, customer_id) VALUES (?, ?, ?)";
+       /* String carSql = "INSERT INTO booking_cars (booking_number, car_id, customer_id) VALUES (?, ?, ?)";
         try (PreparedStatement carStatement = connection.prepareStatement(carSql)) {
             Car car = booking.getCar();
             carStatement.setString(1, booking.getBookingNumber());
             carStatement.setString(2, car.getCarId());
             carStatement.setString(3, booking.getCustomer().getRegistrationNumber());
             carStatement.executeUpdate();
-        }
+        }*/
     }
 
 
@@ -54,6 +56,7 @@ public class BookingDAO {
                 booking.setDestination(resultSet.getString("destination"));
                 booking.setDistance(resultSet.getDouble("distance"));
                 booking.setFare(resultSet.getDouble("fare"));
+                booking.setDriver(new Driver(resultSet.getString("driver_id")));
 
                 // Set the single car for the booking
                 String carId = resultSet.getString("car_id");

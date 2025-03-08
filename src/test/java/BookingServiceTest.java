@@ -2,6 +2,7 @@ import com.megacitycab.megacitycab.dao.BookingDAO;
 import com.megacitycab.megacitycab.model.Booking;
 import com.megacitycab.megacitycab.model.Car;
 import com.megacitycab.megacitycab.model.Customer;
+import com.megacitycab.megacitycab.model.Driver;
 import com.megacitycab.megacitycab.service.BookingService;
 import org.junit.jupiter.api.*;
 
@@ -29,9 +30,10 @@ class BookingServiceTest {
         System.out.println("Running testAddBooking...");
         Customer customer = new Customer("C001");
         Car car = new Car("1");
-        Booking booking = new Booking("B001", customer, "Destination A", 15.5, 200.0, car);
+        Driver driver = new Driver("1");
+        Booking booking = new Booking("B001", customer, "Destination A", 15.5, 200.0, car, driver);
         bookingService.addBooking(booking);
-        
+
         List<Booking> bookings = bookingService.getAllBookings();
         assertFalse(bookings.isEmpty());
         assertEquals("Destination A", bookings.get(0).getDestination());
@@ -53,12 +55,13 @@ class BookingServiceTest {
         System.out.println("Running testUpdateBooking...");
         Customer customer = new Customer("C001");
         Car car = new Car("1"); // Updating car
-        Booking booking = new Booking("B001", customer, "Updated Destination", 20.0, 250.0, car);
+        Driver driver = new Driver("1"); // Updating car
+        Booking booking = new Booking("B001", customer, "Updated Destination", 20.0, 250.0, car, driver);
         bookingService.updateBooking(booking);
-        
+
         List<Booking> bookings = bookingService.getAllBookings();
         Booking updatedBooking = bookings.stream().filter(b -> b.getBookingNumber().equals("B001")).findFirst().orElse(null);
-        
+
         assertNotNull(updatedBooking);
         assertEquals("Updated Destination", updatedBooking.getDestination());
         System.out.println("testUpdateBooking passed!");
@@ -70,7 +73,7 @@ class BookingServiceTest {
         System.out.println("Running testDeleteBooking...");
         bookingService.deleteBooking("B001");
         List<Booking> bookings = bookingService.getAllBookings();
-        
+
         boolean isDeleted = bookings.stream().noneMatch(b -> b.getBookingNumber().equals("B001"));
         assertTrue(isDeleted);
         System.out.println("testDeleteBooking passed!");

@@ -4,14 +4,19 @@ public class Driver {
     private String driverId;
     private String name;
     private String licenseNumber;
-
+    private String status;
     public Driver() {
     }
 
-    public Driver(String driverId, String name, String licenseNumber) {
+    public Driver (String driverId){
+        this.driverId = driverId;
+    }
+
+    public Driver(String driverId, String name, String licenseNumber, String status) {
         this.driverId = driverId;
         this.name = name;
         this.licenseNumber = licenseNumber;
+        this.status = status;
     }
 
     public String getDriverId() {
@@ -36,5 +41,13 @@ public class Driver {
 
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

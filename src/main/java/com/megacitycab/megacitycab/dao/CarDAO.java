@@ -17,12 +17,13 @@ public class CarDAO {
     }
 
     public void addCar(Car car) throws SQLException {
-        String sql = "INSERT INTO cars (car_id, model, license_plate, price) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO cars (car_id, model, license_plate, price, status) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, car.getCarId());
             statement.setString(2, car.getModel());
             statement.setString(3, car.getLicensePlate());
             statement.setDouble(4, car.getPrice());
+            statement.setString(5, "AVAILABLE");
             statement.executeUpdate();
         }
     }
@@ -38,11 +39,37 @@ public class CarDAO {
                 car.setModel(resultSet.getString("model"));
                 car.setLicensePlate(resultSet.getString("license_plate"));
                 car.setPrice(resultSet.getDouble("price"));
+                car.setStatus(resultSet.getString("status"));
                 cars.add(car);
             }
         }
         return cars;
     }
+
+    public List<Car> getAllCarsWhereStatus(String status) throws SQLException {
+        List<Car> cars = new ArrayList<>();
+        String sql = "SELECT * FROM cars WHERE status = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            // Set the status parameter to the provided value
+            statement.setString(1, status);
+
+            // Execute the query and process the result
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Car car = new Car();
+                    car.setCarId(resultSet.getString("car_id"));
+                    car.setModel(resultSet.getString("model"));
+                    car.setLicensePlate(resultSet.getString("license_plate"));
+                    car.setPrice(resultSet.getDouble("price"));
+                    car.setStatus(resultSet.getString("status"));
+                    cars.add(car);
+                }
+            }
+        }
+        return cars;
+    }
+
 
     public void updateCar(Car car) throws SQLException {
         String sql = "UPDATE cars SET model = ?, license_plate = ?, price = ? WHERE car_id = ?";
@@ -73,11 +100,21 @@ public class CarDAO {
                 String id = rs.getString("car_id");
                 String model = rs.getString("model");
                 String licensePlate = rs.getString("license_plate");
+                String status = rs.getString("status");
                 double price = rs.getDouble("price");
 
-                return new Car(id, model, licensePlate, price);
+                return new Car(id, model, licensePlate, price, status);
             }
         }
         return null;  // Return null if the car is not found
+    }
+
+    public void updateCarStatus(String carId, String status) throws SQLException {
+        String sql = "UPDATE cars SET status = ? WHERE car_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, status);
+            statement.setString(2, carId);
+            statement.executeUpdate();
+        }
     }
 }

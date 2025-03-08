@@ -66,13 +66,8 @@ public class DriverServlet extends HttpServlet {
         String name = request.getParameter("name");
         String licenseNumber = request.getParameter("licenseNumber");
 
-        Driver driver = new Driver();
-        driver.setDriverId(driverId);
-        driver.setName(name);
-        driver.setLicenseNumber(licenseNumber);
-
         try {
-            driverService.addDriver(driver);
+            driverService.addDriver(driverId, name, licenseNumber);
             response.sendRedirect("drivers?success=1");
         } catch (SQLException e) {
             response.sendRedirect("drivers?error=1");

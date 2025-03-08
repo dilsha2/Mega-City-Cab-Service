@@ -76,6 +76,7 @@
                 <th>Driver ID</th>
                 <th>Name</th>
                 <th>License Number</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -85,6 +86,7 @@
                     <td>${driver.driverId}</td>
                     <td>${driver.name}</td>
                     <td>${driver.licenseNumber}</td>
+                    <td>${driver.status}</td>
                     <td>
                         <!-- Update Button -->
                         <button class="btn btn-warning btn-sm" data-bs-toggle="modal"

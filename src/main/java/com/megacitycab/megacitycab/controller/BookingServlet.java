@@ -1,15 +1,10 @@
 package com.megacitycab.megacitycab.controller;
 
 
-import com.megacitycab.megacitycab.dao.BookingDAO;
-import com.megacitycab.megacitycab.dao.CarDAO;
-import com.megacitycab.megacitycab.dao.CustomerDAO;
-import com.megacitycab.megacitycab.model.Booking;
-import com.megacitycab.megacitycab.model.Car;
-import com.megacitycab.megacitycab.model.Customer;
-import com.megacitycab.megacitycab.service.BookingService;
-import com.megacitycab.megacitycab.service.CarService;
-import com.megacitycab.megacitycab.service.CustomerService;
+import com.megacitycab.megacitycab.dao.*;
+import com.megacitycab.megacitycab.enums.Status;
+import com.megacitycab.megacitycab.model.*;
+import com.megacitycab.megacitycab.service.*;
 import com.megacitycab.megacitycab.util.DBUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,8 +21,9 @@ import java.util.List;
 public class BookingServlet extends HttpServlet {
     private BookingService bookingService;
     private CarService carService;
-
     private CustomerService customerService;
+    private DriverService driverService;
+    private PaymentService paymentService;
 
     @Override
     public void init() throws ServletException {
@@ -36,6 +32,8 @@ public class BookingServlet extends HttpServlet {
             bookingService = new BookingService(new BookingDAO(connection));
             carService = new CarService(new CarDAO(connection));
             customerService = new CustomerService(new CustomerDAO(connection));
+            driverService = new DriverService(new DriverDAO(connection));
+            paymentService = new PaymentService(new PaymentDAO(connection));
 
         } catch (SQLException e) {
             throw new ServletException("Unable to connect to database", e);
@@ -58,10 +56,17 @@ public class BookingServlet extends HttpServlet {
             handleUpdateBooking(request, response);
         } else if ("delete".equals(action)) {
             handleDeleteBooking(request, response);
+        } else if ("pay".equals(action)) {  // New action for processing payments
+            try {
+                handlePayment(request, response);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             response.sendRedirect("bookings.jsp?error=1");
         }
     }
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -72,10 +77,13 @@ public class BookingServlet extends HttpServlet {
             request.setAttribute("bookings", bookings);
 
             // Fetch available cars
-            List<Car> availableCars = carService.getAllCars();  // Fetch available cars from CarService
+            List<Car> availableCars = carService.getAllCarsWhereStatus(Status.AVAILABLE.name());
             request.setAttribute("availableCars", availableCars);
 
             request.setAttribute("registeredCustomers", customerService.getAllCustomers());
+
+            List<Driver> availableDrivers = driverService.getAllDriversWhereStatus();
+            request.setAttribute("availableDrivers", availableDrivers);
 
             // Forward to the JSP page
             request.getRequestDispatcher("bookings.jsp").forward(request, response);
@@ -91,7 +99,8 @@ public class BookingServlet extends HttpServlet {
         String customerRegNum = request.getParameter("customerRegistrationNumber");
         String destination = request.getParameter("destination");
         double distance = Double.parseDouble(request.getParameter("distance"));
-        String carId = request.getParameter("carId");  // Only one car allowed
+        String carId = request.getParameter("carId");
+        String driverId = request.getParameter("driverId");
 
         System.out.println("Fetching customer with registration number: " + customerRegNum);
         Customer customer = customerService.getCustomerByRegistrationNumber(customerRegNum);
@@ -110,7 +119,15 @@ public class BookingServlet extends HttpServlet {
             return;
         }
 
-        double fare = distance * 2;
+        System.out.println("Fetching Car with ID: " + driverId);
+        Driver driver = driverService.getDriverById(driverId);
+        if (driver == null) {
+            System.out.println("driver not found: " + carId);
+            response.sendRedirect("bookings.jsp?error=driver not found");
+            return;
+        }
+
+        double fare = distance * car.getPrice();
         Booking booking = new Booking();
         booking.setBookingNumber(bookingNumber);
         booking.setCustomer(customer);
@@ -118,9 +135,13 @@ public class BookingServlet extends HttpServlet {
         booking.setDistance(distance);
         booking.setFare(fare);
         booking.setCar(car);
+        booking.setDriver(driver);
 
         try {
             bookingService.addBooking(booking);
+            carService.updateCarStatus(carId, Status.BOOKED.name());
+            driverService.updateDriverStatus(driverId, Status.BOOKED.name());
+
             response.sendRedirect("bookings");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -164,5 +185,38 @@ public class BookingServlet extends HttpServlet {
         } catch (SQLException e) {
             response.sendRedirect("bookings?error=1");
         }
+    }
+
+    private void handlePayment(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+        String bookingNumber = request.getParameter("bookingNumber");
+        String customerRegNum = request.getParameter("customerRegistrationNumber");
+        String carId = request.getParameter("carId");
+        double amount = Double.parseDouble(request.getParameter("amount"));
+        String driverId = request.getParameter("driverId");
+
+        // Fetch the customer and validate the booking
+        Customer customer = customerService.getCustomerByRegistrationNumber(customerRegNum);
+        if (customer == null) {
+            response.sendRedirect("bookings.jsp?error=Customer not found");
+            return;
+        }
+
+        // Process the payment
+        Payment payment = new Payment();
+        payment.setBookingNumber(bookingNumber);
+        payment.setCustomerId(customer.getRegistrationNumber());
+        payment.setCarId(carId);
+        payment.setAmount(amount);
+        payment.setStatus(Status.PAID.name());
+
+        // Save payment
+        paymentService.addPayment(payment);
+
+        // Release the car and driver, making them available
+        carService.updateCarStatus(carId, Status.AVAILABLE.name());
+        driverService.updateDriverStatus(driverId, Status.AVAILABLE.name());
+
+        // Redirect to bookings page after payment
+        response.sendRedirect("bookings?success=Payment successful");
     }
 }

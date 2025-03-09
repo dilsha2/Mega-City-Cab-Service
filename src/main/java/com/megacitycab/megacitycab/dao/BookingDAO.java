@@ -130,4 +130,36 @@ public class BookingDAO {
             deleteStatement.executeUpdate();
         }
     }
+
+    public Booking getBookingByNumber(String bookingNumber) throws SQLException {
+        Booking booking = null;
+        String sql = "SELECT * FROM bookings WHERE booking_number = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, bookingNumber);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    booking = new Booking();
+                    booking.setBookingNumber(resultSet.getString("booking_number"));
+                    booking.setDestination(resultSet.getString("destination"));
+                    booking.setDistance(resultSet.getDouble("distance"));
+                    booking.setFare(resultSet.getDouble("fare"));
+
+                    // Fetch Customer details
+                    String customerId = resultSet.getString("customer_id");
+                    booking.setCustomer(new Customer(customerId));
+
+                    // Fetch Car details
+                    String carId = resultSet.getString("car_id");
+                    booking.setCar(new Car(carId));
+
+                    // Fetch Driver details
+                    String driverId = resultSet.getString("driver_id");
+                    booking.setDriver(new Driver(driverId));
+                }
+            }
+        }
+        return booking;
+    }
+
 }

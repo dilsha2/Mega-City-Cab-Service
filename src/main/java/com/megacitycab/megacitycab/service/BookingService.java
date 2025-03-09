@@ -30,4 +30,8 @@ public class BookingService {
         bookingDAO.deleteBooking(bookingId);
     }
 
+    public Booking getBookingByNumber(String bookingNumber) throws SQLException {
+        return bookingDAO.getBookingByNumber(bookingNumber);
+    }
+
 }

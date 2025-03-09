@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking Management - Mega City Cab</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 <div class="container mt-5 p-4 bg-white rounded shadow">
@@ -56,10 +57,9 @@
                 <td>${booking.car.carId}</td>
                 <td>${booking.driver.driverId}</td>
                 <td>
-                    <a href="editBooking?id=${booking.bookingNumber}" class="btn btn-warning btn-sm">Edit</a>
                     <a href="deleteBooking?id=${booking.bookingNumber}" class="btn btn-danger btn-sm"
                        onclick="return confirm('Are you sure you want to delete this booking?')">Delete</a>
-                    <button class="btn btn-success btn-sm" onclick="openPaymentModal('${booking.bookingNumber}', ${booking.fare})">Pay</button>
+                    <a href="bookings?bookingNumber=${booking.bookingNumber}" class="btn btn-info btn-sm">Print Receipt</a>
                 </td>
             </tr>
         </c:forEach>
@@ -128,32 +128,7 @@
     </div>
 </div>
 
-<!-- Add Payment Modal -->
-<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel">Make Payment</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="payment" method="post">
-                    <input type="hidden" name="action" value="pay">
-                    <input type="hidden" name="bookingNumber" id="paymentBookingNumber">
-
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Amount (LKR)</label>
-                        <input type="number" class="form-control" id="amount" name="amount" required>
-                    </div>
-
-                    <button type="submit" class="btn btn-success">Make Payment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- JavaScript for Search Functionality -->
+<!-- JavaScript for Search -->
 <script>
     function searchTable() {
         let input = document.getElementById("searchInput").value.toLowerCase();
@@ -170,12 +145,6 @@
                 rows[i].style.display = "none";
             }
         }
-    }
-
-    function openPaymentModal(bookingNumber, fare) {
-        document.getElementById('paymentBookingNumber').value = bookingNumber;
-        document.getElementById('amount').value = fare;
-        new bootstrap.Modal(document.getElementById('paymentModal')).show();
     }
 </script>
 

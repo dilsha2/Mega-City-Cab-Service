@@ -18,21 +18,34 @@
         </a>
     </div>
 
-    <h1 class="text-center">Booking Management</h1>
+    <!-- ✅ Success Alert (Visible only if 'success' parameter exists) -->
+    <c:if test="${not empty param.success}">
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <i class="bi bi-check-circle-fill"></i> Booking added successfully!
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </c:if>
 
-    <!-- 🔍 Search Box -->
-    <div class="input-group mb-3">
-        <input type="text" id="searchInput" class="form-control" placeholder="Search by Booking Number or Customer ID" onkeyup="searchTable()">
-        <span class="input-group-text"><i class="bi bi-search"></i></span>
-    </div>
+    <h1 class="text-center mb-4">Booking Management</h1>
 
+    <!-- ✅ "Add New Booking" Button -->
     <div class="text-center my-3">
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookingModal">
-            Add New Booking
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+            <i class="bi bi-plus-circle"></i> Add New Booking
         </button>
     </div>
 
-    <!-- Booking List -->
+    <!-- 🔍 Search Fields (Two Fields: Booking Number & Customer ID) -->
+    <div class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" id="searchBooking" class="form-control" placeholder="Search by Booking Number" onkeyup="searchTable()">
+        </div>
+        <div class="col-md-6">
+            <input type="text" id="searchCustomer" class="form-control" placeholder="Search by Customer ID" onkeyup="searchTable()">
+        </div>
+    </div>
+
+    <!-- ✅ Booking List -->
     <table class="table table-bordered table-striped text-center">
         <thead class="table-primary">
         <tr>
@@ -67,7 +80,7 @@
     </table>
 </div>
 
-<!-- Add Booking Modal -->
+<!-- ✅ Add Booking Modal -->
 <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -128,10 +141,11 @@
     </div>
 </div>
 
-<!-- JavaScript for Search -->
+<!-- ✅ JavaScript for Dual Search -->
 <script>
     function searchTable() {
-        let input = document.getElementById("searchInput").value.toLowerCase();
+        let bookingInput = document.getElementById("searchBooking").value.toLowerCase();
+        let customerInput = document.getElementById("searchCustomer").value.toLowerCase();
         let table = document.getElementById("bookingTableBody");
         let rows = table.getElementsByTagName("tr");
 
@@ -139,7 +153,7 @@
             let bookingNumber = rows[i].getElementsByTagName("td")[0].innerText.toLowerCase();
             let customerId = rows[i].getElementsByTagName("td")[1].innerText.toLowerCase();
 
-            if (bookingNumber.includes(input) || customerId.includes(input)) {
+            if (bookingNumber.includes(bookingInput) && customerId.includes(customerInput)) {
                 rows[i].style.display = "";
             } else {
                 rows[i].style.display = "none";
@@ -148,7 +162,7 @@
     }
 </script>
 
-<!-- Bootstrap JS -->
+<!-- ✅ Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

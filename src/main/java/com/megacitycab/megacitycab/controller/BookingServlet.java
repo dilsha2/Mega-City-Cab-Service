@@ -3,8 +3,15 @@ package com.megacitycab.megacitycab.controller;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.borders.Border;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.LineSeparator;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import com.megacitycab.megacitycab.dao.*;
 import com.megacitycab.megacitycab.enums.Status;
 import com.megacitycab.megacitycab.model.*;
@@ -251,30 +258,63 @@ public class BookingServlet extends HttpServlet {
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=Booking_Receipt_" + bookingNumber + ".pdf");
 
-        Customer customerByRegistrationNumber = customerService.getCustomerByRegistrationNumber(booking.getCustomer().getRegistrationNumber());
+        Customer customer = customerService.getCustomerByRegistrationNumber(booking.getCustomer().getRegistrationNumber());
+        Driver driver = driverService.getDriverById(booking.getDriver().getDriverId());
 
-        String customerName = customerByRegistrationNumber.getName();
-
-        Driver driverById = driverService.getDriverById(booking.getDriver().getDriverId());
-
-        String driverName = driverById.getName();
+        String customerName = (customer != null) ? customer.getName() : "N/A";
+        String driverName = (driver != null) ? driver.getName() : "N/A";
 
         try (OutputStream out = response.getOutputStream();
              PdfWriter writer = new PdfWriter(out);
              PdfDocument pdfDoc = new PdfDocument(writer);
              Document document = new Document(pdfDoc)) {
 
-            document.add(new Paragraph("Mega City Cab - Booking Receipt").setBold().setFontSize(18));
-            document.add(new Paragraph("------------------------------------------------------"));
-            document.add(new Paragraph("Booking Number: " + booking.getBookingNumber()));
-            document.add(new Paragraph("Customer: " + customerName));
-            document.add(new Paragraph("Destination: " + booking.getDestination()));
-            document.add(new Paragraph("Distance: " + booking.getDistance() + " km"));
-            document.add(new Paragraph("Car: " + booking.getCar().getCarId()));
-            document.add(new Paragraph("Driver: " + driverName));
-            document.add(new Paragraph("Fare: LKR " + booking.getFare()));
-            document.add(new Paragraph("------------------------------------------------------"));
-            document.add(new Paragraph("Thank you for choosing Mega City Cab!"));
+            // Title
+            Paragraph title = new Paragraph("Mega City Cab - Booking Receipt")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setBold()
+                    .setFontSize(20)
+                    .setMarginBottom(15);
+            document.add(title);
+
+            // Line Separator
+            document.add(new LineSeparator(new SolidLine()).setMarginBottom(10));
+
+            // Booking Details Table
+            Table table = new Table(UnitValue.createPercentArray(2)).useAllAvailableWidth();
+            table.addCell(new Cell().add(new Paragraph("Booking Number:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(booking.getBookingNumber())).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Customer:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(customerName)).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Destination:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(booking.getDestination())).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Distance:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(booking.getDistance() + " km")).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Car:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(booking.getCar().getCarId())).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Driver:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph(driverName)).setBorder(Border.NO_BORDER));
+
+            table.addCell(new Cell().add(new Paragraph("Fare:").setBold()).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell().add(new Paragraph("LKR " + booking.getFare())).setBorder(Border.NO_BORDER));
+
+            document.add(table);
+
+            // Line Separator
+            document.add(new LineSeparator(new SolidLine()).setMarginTop(10).setMarginBottom(10));
+
+            // Thank You Message
+            Paragraph thankYou = new Paragraph("Thank you for choosing Mega City Cab!")
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setItalic()
+                    .setFontSize(12)
+                    .setMarginTop(15);
+            document.add(thankYou);
 
             document.close();
         }

@@ -29,8 +29,8 @@ class BookingServiceTest {
     void testAddBooking() throws SQLException {
         System.out.println("Running testAddBooking...");
         Customer customer = new Customer("C001");
-        Car car = new Car("1");
-        Driver driver = new Driver("1");
+        Car car = new Car("C001");
+        Driver driver = new Driver("D001");
         Booking booking = new Booking("B001", customer, "Destination A", 15.5, 200.0, car, driver);
         bookingService.addBooking(booking);
 

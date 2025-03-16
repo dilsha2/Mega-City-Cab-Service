@@ -122,13 +122,6 @@ public class BookingDAO {
             statement.setString(1, bookingNumber);
             statement.executeUpdate();
         }
-
-        // Delete cars associated with the booking
-        String deleteCarsSql = "DELETE FROM booking_cars WHERE booking_number = ?";
-        try (PreparedStatement deleteStatement = connection.prepareStatement(deleteCarsSql)) {
-            deleteStatement.setString(1, bookingNumber);
-            deleteStatement.executeUpdate();
-        }
     }
 
     public Booking getBookingByNumber(String bookingNumber) throws SQLException {
